@@ -1,0 +1,30 @@
+class Solution(object):
+    def largestTimeFromDigits(self, arr):
+        """
+        :type arr: List[int]
+        :rtype: str
+        """
+        
+        list = []    
+
+        for i in range(4):
+            for j in range(4):
+                if i != j:
+                    for k in range(4):
+                        if i != k and j != k:
+                            for l in range(4):
+                                if i != l and j != l and k != l:
+                                    list.append(1000*arr[i] + 100*arr[j] + 10*arr[k] + arr[l])
+
+        list.sort()
+        list.reverse()
+
+        res=""
+
+        for i in list:
+            if i / 100 < 24 and i % 100 < 60:
+                # print(i)
+                res = str(i / 1000) + str((i / 100) % 10) + ":" + str(i % 100 / 10) + str(i % 10)
+                break
+
+        return res
