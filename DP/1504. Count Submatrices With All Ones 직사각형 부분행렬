@@ -1,0 +1,85 @@
+자바 내 코드
+
+class Solution {
+    public int numSubmat(int[][] mat) {
+        int rows = mat.length;
+        int columns = mat[0].length;
+        int count = 0;
+        
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < columns; j++) {
+                count += getRec(mat, i, j);
+            }
+        }
+        
+        return count;
+    }
+    
+    int getRec(int[][] mat, int x, int y) {
+        int maxX = x;
+        int maxY = y;
+        int count = 0;
+        
+        while(maxX < mat.length && mat[maxX][y] == 1) {
+            maxX++; // 2
+        }
+        
+        while(maxY < mat[0].length && mat[x][maxY] == 1) {
+            maxY++; // 0
+        }
+        
+        for(int i = x; i < maxX; i++) {
+            for(int j = y; j < maxY; j++) {
+                if(mat[i][j] == 1) {
+                    count++;
+                } else {
+                    maxY = j;
+                }
+            }
+        }
+        
+        return count;
+    }
+}
+
+
+0 1 1 0        0 2 1 0      각 행의 모든 수를 더한뒤
+0 1 1 1   =>   0 3 2 1  =>  열에서는 그 열의 최소값을 더한다
+1 1 1 0        3 2 1 0
+
+파이썬 답지
+
+class Solution:
+    def numSubmat(self, mat: List[List[int]]) -> int:
+        total = 0
+        m = len(mat)
+        n = len(mat[0])
+        # for every row, start from the end and put count of consecutive 1 cells
+        # for example:
+        # 0 1 1 0       0 2 1 0
+        # 0 1 1 1   =>  0 3 2 1 
+        # 1 1 1 0       3 2 1 0
+        for i in range(m):
+            c = 0
+            for j in range(n-1, -1, -1):
+                if mat[i][j]:
+                    c += 1
+                else:
+                    c = 0
+                mat[i][j] = c
+        
+        # now for every cell count from current col to 0 and keep adding the min encountered to account for the length of rectangle which can be formed for that cell
+        # for example, for cell (3,1) having a value of 2 (marked with *)
+        # 0  2  1  0
+        # 0  3  2  1
+        # 3  2* 1  0
+        # this will be 2 + 2 + 2
+        res = 0
+        for i in range(m):
+            for j in range(n):
+                min_col = mat[i][j]
+                if min_col:
+                    for k in range(i, -1, -1):
+                        min_col = min(min_col, mat[k][j])
+                        res += min_col
+        return res
